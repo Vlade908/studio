@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef } from 'react';
+import * as XLSX from 'xlsx';
 import { UploadCloud, FileText, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -48,12 +49,38 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
 
   const handleAnalyzeClick = () => {
     if (!file) return;
+
     const reader = new FileReader();
-    reader.onload = (e) => {
-      const content = e.target?.result as string;
-      onAnalyze(content);
-    };
-    reader.readAsText(file);
+    const fileExtension = file.name.split('.').pop()?.toLowerCase();
+
+    if (fileExtension === 'ods' || fileExtension === 'xls' || fileExtension === 'xlsx') {
+      reader.onload = (e) => {
+        try {
+          const data = e.target?.result;
+          const workbook = XLSX.read(data, { type: 'array' });
+          const firstSheetName = workbook.SheetNames[0];
+          const worksheet = workbook.Sheets[firstSheetName];
+          const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+          
+          const namesContent = jsonData
+            .map((row: any) => row[0])
+            .filter(name => name !== null && name !== undefined && String(name).trim() !== '')
+            .join('\n');
+            
+          onAnalyze(namesContent);
+        } catch (error) {
+          console.error("Error parsing file:", error);
+          alert("Could not parse the file. Please ensure it's a valid spreadsheet and that names are in the first column.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else { // For .txt and .csv
+      reader.onload = (e) => {
+        const content = e.target?.result as string;
+        onAnalyze(content);
+      };
+      reader.readAsText(file);
+    }
   };
 
   const removeFile = () => {
@@ -67,7 +94,7 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
     <Card className="shadow-lg transition-all duration-300 hover:shadow-xl">
       <CardHeader>
         <CardTitle>Upload Your File</CardTitle>
-        <CardDescription>Drag and drop a .txt or .csv file, or click to select one.</CardDescription>
+        <CardDescription>Drag and drop a file, or click to select one.</CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
         {file ? (
@@ -96,12 +123,12 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
             <p className="mt-4 text-sm text-muted-foreground">
               <span className="font-semibold text-primary">Click to upload</span> or drag and drop
             </p>
-            <p className="text-xs text-muted-foreground mt-1">TXT or CSV (max. 5MB)</p>
+            <p className="text-xs text-muted-foreground mt-1">TXT, CSV, ODS, XLS, XLSX (max. 5MB)</p>
             <input
               ref={fileInputRef}
               type="file"
               className="hidden"
-              accept=".txt,.csv"
+              accept=".txt,.csv,.ods,.xls,.xlsx"
               onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
             />
           </div>
