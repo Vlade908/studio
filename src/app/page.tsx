@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { FileUploader } from '@/components/file-uploader';
 import { ResultsDisplay } from '@/components/results-display';
-import type { DetectDuplicateNamesOutput } from '@/ai/flows/detect-duplicate-names';
+import type { DetectDuplicateNamesOutput } from '@/app/actions';
 import { analyzeFileForDuplicates } from '@/app/actions';
 import { useToast } from "@/hooks/use-toast";
 
@@ -41,7 +41,7 @@ export default function Home() {
               Duplicate Detective
             </h1>
             <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Upload a file to instantly find duplicate names with AI-powered precision.
+              Upload a file to instantly find duplicate names.
             </p>
           </header>
 

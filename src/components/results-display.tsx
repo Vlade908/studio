@@ -1,6 +1,6 @@
 "use client";
 
-import type { DetectDuplicateNamesOutput } from '@/ai/flows/detect-duplicate-names';
+import type { DetectDuplicateNamesOutput } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Skeleton } from '@/components/ui/skeleton';

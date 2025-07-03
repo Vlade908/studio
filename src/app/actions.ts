@@ -1,6 +1,15 @@
 'use server';
 
-import { detectDuplicateNames, type DetectDuplicateNamesOutput } from '@/ai/flows/detect-duplicate-names';
+export type DetectDuplicateNamesOutput = Array<{
+  name: string;
+  count: number;
+}>;
+
+function normalizeName(name: string): string {
+  // Normalização simples: remove espaços em branco e converte para minúsculas.
+  // Isso não captura variações como 'Jon' vs 'John'.
+  return name.trim().toLowerCase();
+}
 
 export async function analyzeFileForDuplicates(fileContent: string): Promise<{ data: DetectDuplicateNamesOutput | null; error: string | null }> {
   if (!fileContent) {
@@ -8,10 +17,28 @@ export async function analyzeFileForDuplicates(fileContent: string): Promise<{ d
   }
 
   try {
-    const results = await detectDuplicateNames({ fileContent });
+    const lines = fileContent.split(/\r?\n/).filter(line => line.trim() !== '');
+    const counts: Map<string, { count: number; original: string }> = new Map();
+
+    for (const line of lines) {
+      const normalized = normalizeName(line);
+      if (normalized) {
+        if (counts.has(normalized)) {
+          counts.get(normalized)!.count++;
+        } else {
+          counts.set(normalized, { count: 1, original: line.trim() });
+        }
+      }
+    }
+
+    const results: DetectDuplicateNamesOutput = Array.from(counts.entries()).map(([_, value]) => ({
+      name: value.original,
+      count: value.count,
+    }));
+
     return { data: results, error: null };
   } catch (error) {
-    console.error('Error detecting duplicate names:', error);
-    return { data: null, error: 'Failed to analyze file. The AI service may be temporarily unavailable.' };
+    console.error('Error analyzing file for duplicates:', error);
+    return { data: null, error: 'An unexpected error occurred while analyzing the file.' };
   }
 }
