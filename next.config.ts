@@ -6,6 +6,7 @@ const cspHeader = `
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com;
     worker-src 'self' blob: https://unpkg.com;
+    connect-src 'self' https://unpkg.com;
     img-src 'self' https://placehold.co data:;
     form-action 'self';
     frame-ancestors 'self';
