@@ -44,16 +44,16 @@ export function ResultsDisplay({ results, isLoading }: ResultsDisplayProps) {
   const duplicates = results;
 
   return (
-    <Card className="shadow-sm transition-all duration-500 ease-in-out animate-in fade-in-0">
+    <Card className="shadow-sm transition-all duration-500 ease-in-out animate-in fade-in-0 slide-in-from-bottom-5">
       <CardHeader>
         <CardTitle className="flex items-center gap-3">
             <Users className="h-6 w-6 text-primary"/>
-            Analysis Results
+            Resultados da Análise
         </CardTitle>
         <CardDescription>
             {duplicates.length > 0 
-                ? `Found ${duplicates.length} duplicate name(s).` 
-                : "No duplicate names were found in the uploaded file."}
+                ? `Encontrados ${duplicates.length} nome(s) duplicado(s).` 
+                : "Nenhum nome duplicado foi encontrado no arquivo."}
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -62,13 +62,13 @@ export function ResultsDisplay({ results, isLoading }: ResultsDisplayProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead className="text-right">Occurrences</TableHead>
+                  <TableHead>Nome</TableHead>
+                  <TableHead className="text-right">Ocorrências</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {duplicates.map((item, index) => (
-                  <TableRow key={index}>
+                  <TableRow key={index} className="animate-in fade-in-0" style={{ animationDelay: `${index * 50}ms`, animationFillMode: 'backwards' }}>
                     <TableCell className="font-medium">{item.name}</TableCell>
                     <TableCell className="text-right font-mono text-primary font-bold text-lg">{item.count}</TableCell>
                   </TableRow>
@@ -79,8 +79,8 @@ export function ResultsDisplay({ results, isLoading }: ResultsDisplayProps) {
         ) : (
           <div className="flex flex-col items-center justify-center p-12 text-center bg-muted/50 rounded-lg">
             <CheckCircle2 className="h-12 w-12 mb-4 text-primary" />
-            <h3 className="text-xl font-semibold text-foreground">All Clear!</h3>
-            <p className="mt-1 text-muted-foreground">Your file is free of duplicate names.</p>
+            <h3 className="text-xl font-semibold text-foreground">Tudo Certo!</h3>
+            <p className="mt-1 text-muted-foreground">Seu arquivo não contém nomes duplicados.</p>
           </div>
         )}
       </CardContent>

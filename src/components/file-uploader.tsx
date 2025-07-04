@@ -20,7 +20,7 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
   const handleFileChange = (selectedFile: File | null) => {
     if (selectedFile) {
       if (selectedFile.size > 5 * 1024 * 1024) { // 5MB limit
-        alert("File is too large. Please upload a file smaller than 5MB.");
+        alert("O arquivo é muito grande. Por favor, envie um arquivo menor que 5MB.");
         return;
       }
       setFile(selectedFile);
@@ -70,7 +70,7 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
           onAnalyze(namesContent);
         } catch (error) {
           console.error("Error parsing file:", error);
-          alert("Could not parse the file. Please ensure it's a valid spreadsheet and that names are in the first column.");
+          alert("Não foi possível ler o arquivo. Garanta que é uma planilha válida e que os nomes estão na primeira coluna.");
         }
       };
       reader.readAsArrayBuffer(file);
@@ -107,9 +107,9 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
             >
                 <UploadCloud className="h-10 w-10 text-muted-foreground" />
                 <p className="mt-4 font-semibold text-foreground">
-                Click to upload or drag & drop
+                Clique para enviar ou arraste e solte
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">TXT, CSV, ODS, XLS, or XLSX (5MB max)</p>
+                <p className="text-sm text-muted-foreground mt-1">TXT, CSV, ODS, XLS ou XLSX (máx. 5MB)</p>
                 <input
                 ref={fileInputRef}
                 type="file"
@@ -121,7 +121,7 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
         )}
 
         {file && (
-          <div className="space-y-4">
+          <div className="space-y-4 animate-in fade-in-0 duration-500">
             <div className="flex items-center justify-between p-3 border rounded-md bg-muted/50">
                 <div className="flex items-center gap-3 overflow-hidden">
                 <FileText className="h-6 w-6 text-primary flex-shrink-0" />
@@ -135,10 +135,10 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
                 {isLoading ? (
                     <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Analyzing...
+                    Analisando...
                     </>
                 ) : (
-                    'Analyze Duplicates'
+                    'Analisar Duplicatas'
                 )}
             </Button>
           </div>
