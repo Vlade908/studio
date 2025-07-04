@@ -2,10 +2,14 @@
 
 import { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
+import * as pdfjsLib from 'pdfjs-dist';
 import { UploadCloud, FileText, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
+
+// Define o worker para o pdf.js usando um CDN para compatibilidade com Next.js
+pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
 
 interface FileUploaderProps {
   onAnalyze: (fileContent: string) => void;
@@ -53,7 +57,30 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
     const reader = new FileReader();
     const fileExtension = file.name.split('.').pop()?.toLowerCase();
 
-    if (fileExtension === 'ods' || fileExtension === 'xls' || fileExtension === 'xlsx') {
+    if (fileExtension === 'pdf') {
+      reader.onload = async (e) => {
+        try {
+          const data = e.target?.result as ArrayBuffer;
+          if (!data) {
+            throw new Error("Falha ao ler o buffer do arquivo.");
+          }
+          const loadingTask = pdfjsLib.getDocument({ data });
+          const pdf = await loadingTask.promise;
+          let fullText = '';
+          for (let i = 1; i <= pdf.numPages; i++) {
+            const page = await pdf.getPage(i);
+            const textContent = await page.getTextContent();
+            const pageText = textContent.items.map(item => 'str' in item ? item.str : '').join('\n');
+            fullText += pageText + '\n';
+          }
+          onAnalyze(fullText);
+        } catch (error) {
+          console.error("Error parsing PDF file:", error);
+          alert("Não foi possível ler o arquivo PDF. Garanta que é um arquivo válido e não está corrompido.");
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    } else if (fileExtension === 'ods' || fileExtension === 'xls' || fileExtension === 'xlsx') {
       reader.onload = (e) => {
         try {
           const data = e.target?.result;
@@ -109,12 +136,12 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
                 <p className="mt-4 font-semibold text-foreground">
                 Clique para enviar ou arraste e solte
                 </p>
-                <p className="text-sm text-muted-foreground mt-1">TXT, CSV, ODS, XLS ou XLSX (máx. 5MB)</p>
+                <p className="text-sm text-muted-foreground mt-1">TXT, CSV, ODS, XLS, XLSX ou PDF (máx. 5MB)</p>
                 <input
                 ref={fileInputRef}
                 type="file"
                 className="hidden"
-                accept=".txt,.csv,.ods,.xls,.xlsx"
+                accept=".txt,.csv,.ods,.xls,.xlsx,.pdf"
                 onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
                 />
             </div>
