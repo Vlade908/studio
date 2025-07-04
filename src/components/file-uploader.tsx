@@ -3,14 +3,18 @@
 import { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import * as pdfjsLib from 'pdfjs-dist';
+import * as pdfjsWorker from 'pdfjs-dist/build/pdf.worker.mjs'
 import { UploadCloud, FileText, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from '@/lib/utils';
 
-// Define o worker para o pdf.js usando um CDN para compatibilidade com Next.js
-pdfjsLib.GlobalWorkerOptions.workerSrc = `//unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
+// Define o worker para o pdf.js usando o worker empacotado pelo Next.js
+// Isso evita problemas de CSP e é a abordagem moderna e mais segura.
+if (typeof window !== 'undefined') {
+  pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+}
 
 interface FileUploaderProps {
   onAnalyze: (fileContent: string) => void;

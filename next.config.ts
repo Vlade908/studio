@@ -2,11 +2,11 @@ import type {NextConfig} from 'next';
 
 const cspHeader = `
     default-src 'self';
-    script-src 'self' 'unsafe-eval' 'unsafe-inline' https://unpkg.com;
+    script-src 'self' 'unsafe-eval' 'unsafe-inline';
     style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
     font-src 'self' https://fonts.gstatic.com;
-    worker-src 'self' blob: https://unpkg.com;
-    connect-src 'self' https://unpkg.com;
+    worker-src 'self' blob:;
+    connect-src 'self';
     img-src 'self' https://placehold.co data:;
     form-action 'self';
     frame-ancestors 'self';
