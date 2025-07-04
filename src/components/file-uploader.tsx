@@ -6,6 +6,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import { UploadCloud, FileText, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { useToast } from "@/hooks/use-toast";
 import { cn } from '@/lib/utils';
 
 // Define o worker para o pdf.js usando um CDN para compatibilidade com Next.js
@@ -20,11 +21,16 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
   const [file, setFile] = useState<File | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
 
   const handleFileChange = (selectedFile: File | null) => {
     if (selectedFile) {
       if (selectedFile.size > 5 * 1024 * 1024) { // 5MB limit
-        alert("O arquivo é muito grande. Por favor, envie um arquivo menor que 5MB.");
+        toast({
+          variant: "destructive",
+          title: "Arquivo Muito Grande",
+          description: "Por favor, envie um arquivo menor que 5MB.",
+        });
         return;
       }
       setFile(selectedFile);
@@ -74,9 +80,13 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
             fullText += pageText + '\n';
           }
           onAnalyze(fullText);
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error parsing PDF file:", error);
-          alert("Não foi possível ler o arquivo PDF. Garanta que é um arquivo válido e não está corrompido.");
+          toast({
+            variant: "destructive",
+            title: "Erro ao Ler PDF",
+            description: `Não foi possível processar o arquivo. Detalhe: ${error.message || 'Erro desconhecido.'}`,
+          });
         }
       };
       reader.readAsArrayBuffer(file);
@@ -95,9 +105,13 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
             .join('\n');
             
           onAnalyze(namesContent);
-        } catch (error) {
+        } catch (error: any) {
           console.error("Error parsing file:", error);
-          alert("Não foi possível ler o arquivo. Garanta que é uma planilha válida e que os nomes estão na primeira coluna.");
+          toast({
+            variant: "destructive",
+            title: "Erro ao Ler Planilha",
+            description: "Não foi possível ler o arquivo. Garanta que é uma planilha válida e que os nomes estão na primeira coluna.",
+          });
         }
       };
       reader.readAsArrayBuffer(file);
