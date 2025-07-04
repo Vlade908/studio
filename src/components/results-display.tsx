@@ -41,7 +41,7 @@ export function ResultsDisplay({ results, isLoading }: ResultsDisplayProps) {
     return null;
   }
 
-  const duplicates = results.filter(item => item.count > 1);
+  const duplicates = results; // A API agora só retorna duplicatas
 
   return (
     <Card className="shadow-lg transition-all duration-500 ease-in-out animate-in fade-in-0">
@@ -62,7 +62,7 @@ export function ResultsDisplay({ results, isLoading }: ResultsDisplayProps) {
             <Table>
               <TableHeader>
                 <TableRow>
-                  <TableHead>Normalized Name</TableHead>
+                  <TableHead>Name</TableHead>
                   <TableHead className="text-right">Occurrences</TableHead>
                 </TableRow>
               </TableHeader>

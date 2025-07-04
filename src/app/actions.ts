@@ -7,7 +7,6 @@ export type DetectDuplicateNamesOutput = Array<{
 
 function normalizeName(name: string): string {
   // Normalização simples: remove espaços em branco e converte para minúsculas.
-  // Isso não captura variações como 'Jon' vs 'John'.
   return name.trim().toLowerCase();
 }
 
@@ -31,7 +30,9 @@ export async function analyzeFileForDuplicates(fileContent: string): Promise<{ d
       }
     }
 
-    const results: DetectDuplicateNamesOutput = Array.from(counts.entries()).map(([_, value]) => ({
+    const results: DetectDuplicateNamesOutput = Array.from(counts.entries())
+      .filter(([_, value]) => value.count > 1) // Apenas duplicatas
+      .map(([_, value]) => ({
       name: value.original,
       count: value.count,
     }));
