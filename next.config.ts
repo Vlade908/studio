@@ -1,5 +1,17 @@
 import type {NextConfig} from 'next';
 
+const cspHeader = `
+    default-src 'self';
+    script-src 'self' 'unsafe-eval' 'unsafe-inline';
+    style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+    font-src 'self' https://fonts.gstatic.com;
+    img-src 'self' https://placehold.co data:;
+    form-action 'self';
+    frame-ancestors 'self';
+    object-src 'none';
+    base-uri 'self';
+`.replace(/\s{2,}/g, ' ').trim();
+
 const securityHeaders = [
   // Enforce HTTPS
   {
@@ -11,15 +23,15 @@ const securityHeaders = [
     key: 'X-Content-Type-Options',
     value: 'nosniff',
   },
-  // Prevent clickjacking
-  {
-    key: 'X-Frame-Options',
-    value: 'SAMEORIGIN',
-  },
    // Control referrer information
   {
     key: 'Referrer-Policy',
     value: 'origin-when-cross-origin',
+  },
+  // Add Content-Security-Policy
+  {
+    key: 'Content-Security-Policy',
+    value: cspHeader,
   }
 ];
 
