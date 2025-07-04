@@ -14,7 +14,7 @@ interface ResultsDisplayProps {
 export function ResultsDisplay({ results, isLoading }: ResultsDisplayProps) {
   if (isLoading) {
     return (
-      <Card className="shadow-lg">
+      <Card className="shadow-sm">
         <CardHeader>
           <Skeleton className="h-7 w-48" />
           <Skeleton className="h-4 w-64 mt-2" />
@@ -41,13 +41,13 @@ export function ResultsDisplay({ results, isLoading }: ResultsDisplayProps) {
     return null;
   }
 
-  const duplicates = results; // A API agora só retorna duplicatas
+  const duplicates = results;
 
   return (
-    <Card className="shadow-lg transition-all duration-500 ease-in-out animate-in fade-in-0">
+    <Card className="shadow-sm transition-all duration-500 ease-in-out animate-in fade-in-0">
       <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-            <Users className="h-6 w-6 text-accent"/>
+        <CardTitle className="flex items-center gap-3">
+            <Users className="h-6 w-6 text-primary"/>
             Analysis Results
         </CardTitle>
         <CardDescription>
@@ -70,17 +70,17 @@ export function ResultsDisplay({ results, isLoading }: ResultsDisplayProps) {
                 {duplicates.map((item, index) => (
                   <TableRow key={index}>
                     <TableCell className="font-medium">{item.name}</TableCell>
-                    <TableCell className="text-right font-mono text-accent font-bold text-lg">{item.count}</TableCell>
+                    <TableCell className="text-right font-mono text-primary font-bold text-lg">{item.count}</TableCell>
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </div>
         ) : (
-          <div className="flex flex-col items-center justify-center p-8 text-center bg-muted/50 rounded-lg">
-            <CheckCircle2 className="h-16 w-16 mb-4 text-primary" />
+          <div className="flex flex-col items-center justify-center p-12 text-center bg-muted/50 rounded-lg">
+            <CheckCircle2 className="h-12 w-12 mb-4 text-primary" />
             <h3 className="text-xl font-semibold text-foreground">All Clear!</h3>
-            <p className="mt-2 text-muted-foreground">Your file is free of duplicate names.</p>
+            <p className="mt-1 text-muted-foreground">Your file is free of duplicate names.</p>
           </div>
         )}
       </CardContent>

@@ -33,18 +33,18 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
-      <main className="container mx-auto px-4 py-8 md:py-16">
-        <div className="max-w-3xl mx-auto space-y-8">
-          <header className="text-center">
-            <h1 className="text-4xl md:text-5xl font-bold tracking-tight text-foreground">
-              Duplicate Detective
-            </h1>
-            <p className="mt-3 text-lg text-muted-foreground max-w-2xl mx-auto">
-              Upload a file to instantly find duplicate names.
-            </p>
-          </header>
+    <div className="min-h-screen bg-muted/30">
+      <main className="container mx-auto px-4 py-12 md:py-20">
+        <div className="max-w-2xl mx-auto text-center">
+          <h1 className="text-4xl font-bold tracking-tight sm:text-5xl text-foreground">
+            Duplicate Detective
+          </h1>
+          <p className="mt-4 text-lg text-muted-foreground">
+            Upload a file. Find duplicates. Simple, fast, and secure.
+          </p>
+        </div>
 
+        <div className="max-w-2xl mx-auto mt-10 space-y-6">
           <FileUploader onAnalyze={handleAnalyze} isLoading={isLoading} />
           
           <ResultsDisplay results={results} isLoading={isLoading} />

@@ -4,7 +4,7 @@ import { useState, useRef } from 'react';
 import * as XLSX from 'xlsx';
 import { UploadCloud, FileText, Loader2, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 
 interface FileUploaderProps {
@@ -91,58 +91,58 @@ export function FileUploader({ onAnalyze, isLoading }: FileUploaderProps) {
   };
 
   return (
-    <Card className="shadow-lg transition-all duration-300 hover:shadow-xl">
-      <CardHeader>
-        <CardTitle>Upload Your File</CardTitle>
-        <CardDescription>Drag and drop a file, or click to select one.</CardDescription>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {file ? (
-          <div className="flex items-center justify-between p-4 border rounded-md bg-muted/50">
-            <div className="flex items-center gap-3 overflow-hidden">
-              <FileText className="h-6 w-6 text-primary flex-shrink-0" />
-              <span className="font-medium text-sm truncate">{file.name}</span>
+    <Card className="shadow-sm">
+      <CardContent className="p-4 space-y-4">
+        {!file && (
+            <div
+                className={cn(
+                "flex flex-col items-center justify-center p-10 border-2 border-dashed rounded-lg cursor-pointer transition-colors",
+                isDragging ? "border-primary bg-primary/5" : "border-border/50 hover:border-primary/50 hover:bg-muted"
+                )}
+                onClick={() => fileInputRef.current?.click()}
+                onDragEnter={onDragEnter}
+                onDragLeave={onDragLeave}
+                onDragOver={onDragOver}
+                onDrop={onDrop}
+            >
+                <UploadCloud className="h-10 w-10 text-muted-foreground" />
+                <p className="mt-4 font-semibold text-foreground">
+                Click to upload or drag & drop
+                </p>
+                <p className="text-sm text-muted-foreground mt-1">TXT, CSV, ODS, XLS, or XLSX (5MB max)</p>
+                <input
+                ref={fileInputRef}
+                type="file"
+                className="hidden"
+                accept=".txt,.csv,.ods,.xls,.xlsx"
+                onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
+                />
             </div>
-            <Button variant="ghost" size="icon" onClick={removeFile} disabled={isLoading} className="flex-shrink-0">
-              <X className="h-4 w-4" />
+        )}
+
+        {file && (
+          <div className="space-y-4">
+            <div className="flex items-center justify-between p-3 border rounded-md bg-muted/50">
+                <div className="flex items-center gap-3 overflow-hidden">
+                <FileText className="h-6 w-6 text-primary flex-shrink-0" />
+                <span className="font-medium text-sm truncate">{file.name}</span>
+                </div>
+                <Button variant="ghost" size="icon" onClick={removeFile} disabled={isLoading} className="flex-shrink-0">
+                <X className="h-4 w-4" />
+                </Button>
+            </div>
+            <Button onClick={handleAnalyzeClick} disabled={isLoading} className="w-full">
+                {isLoading ? (
+                    <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Analyzing...
+                    </>
+                ) : (
+                    'Analyze Duplicates'
+                )}
             </Button>
           </div>
-        ) : (
-          <div
-            className={cn(
-              "flex flex-col items-center justify-center p-8 border-2 border-dashed rounded-md cursor-pointer transition-colors",
-              isDragging ? "border-primary bg-primary/10" : "border-border hover:border-primary/50"
-            )}
-            onClick={() => fileInputRef.current?.click()}
-            onDragEnter={onDragEnter}
-            onDragLeave={onDragLeave}
-            onDragOver={onDragOver}
-            onDrop={onDrop}
-          >
-            <UploadCloud className="h-12 w-12 text-muted-foreground" />
-            <p className="mt-4 text-sm text-muted-foreground">
-              <span className="font-semibold text-primary">Click to upload</span> or drag and drop
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">TXT, CSV, ODS, XLS, XLSX (max. 5MB)</p>
-            <input
-              ref={fileInputRef}
-              type="file"
-              className="hidden"
-              accept=".txt,.csv,.ods,.xls,.xlsx"
-              onChange={(e) => handleFileChange(e.target.files ? e.target.files[0] : null)}
-            />
-          </div>
         )}
-        <Button onClick={handleAnalyzeClick} disabled={!file || isLoading} className="w-full">
-          {isLoading ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Analyzing...
-            </>
-          ) : (
-            'Analyze Duplicates'
-          )}
-        </Button>
       </CardContent>
     </Card>
   );
